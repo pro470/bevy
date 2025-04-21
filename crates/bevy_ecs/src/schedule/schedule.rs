@@ -423,6 +423,12 @@ impl Schedule {
         self
     }
 
+    /// Sets the number of threads to use for the schedule's execution strategy.
+    pub fn set_limit_threads(&mut self, limit_threads: usize) -> &mut Self {
+        self.executable.limit_threads = limit_threads.max(1);
+        self
+    }
+
     /// Set whether the schedule applies deferred system buffers on final time or not. This is a catch-all
     /// in case a system uses commands but was not explicitly ordered before an instance of
     /// [`ApplyDeferred`]. By default this
