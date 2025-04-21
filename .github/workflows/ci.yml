@@ -1,12 +1,10 @@
 name: CI
 
 on:
-  merge_group:
-  pull_request:
   push:
-    branches:
-      - release-*
-
+    branches: [dynamic-thread-limiting]
+  pull_request:
+    branches: [dynamic-thread-limiting]
 env:
   CARGO_TERM_COLOR: always
   CARGO_INCREMENTAL: 0
