@@ -30,6 +30,7 @@ struct Environment<'env, 'sys> {
     systems: &'sys [SyncUnsafeCell<ScheduleSystem>],
     conditions: SyncUnsafeCell<Conditions<'sys>>,
     world_cell: UnsafeWorldCell<'env>,
+    limit_threads: usize,
 }
 
 struct Conditions<'a> {
@@ -55,6 +56,7 @@ impl<'env, 'sys> Environment<'env, 'sys> {
                 systems_in_sets_with_conditions: &schedule.systems_in_sets_with_conditions,
             }),
             world_cell: world.as_unsafe_world_cell(),
+            limit_threads: schedule.limit_threads,
         }
     }
 }
@@ -410,6 +412,7 @@ impl ExecutorState {
                     system,
                     conditions,
                     context.environment.world_cell,
+                    context.environment.limit_threads,
                 ) {
                     // NOTE: exclusive systems with ambiguities are susceptible to
                     // being significantly displaced here (compared to single-threaded order)
@@ -472,6 +475,7 @@ impl ExecutorState {
         system: &mut ScheduleSystem,
         conditions: &mut Conditions,
         world: UnsafeWorldCell,
+        limit_threads: usize,
     ) -> bool {
         let system_meta = &self.system_task_metadata[system_index];
         if system_meta.is_exclusive && self.num_running_systems > 0 {
@@ -479,6 +483,10 @@ impl ExecutorState {
         }
 
         if !system_meta.is_send && self.local_thread_running {
+            return false;
+        }
+
+        if self.num_running_systems >= limit_threads {
             return false;
         }
 
