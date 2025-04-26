@@ -423,9 +423,9 @@ impl Schedule {
         self
     }
 
-    /// Sets the number of threads to use for the schedule's execution strategy.
-    pub fn set_limit_threads(&mut self, limit_threads: usize) -> &mut Self {
-        self.executable.limit_threads = limit_threads.max(1);
+    /// Sets the number of systems to use for the schedule's execution strategy.
+    pub fn set_limit_concurrent_system(&mut self, limit_concurrent_system: usize) -> &mut Self {
+        self.executable.limit_concurrent_system = limit_concurrent_system.max(1);
         self
     }
 
@@ -1500,7 +1500,7 @@ impl ScheduleGraph {
             system_dependents,
             sets_with_conditions_of_systems,
             systems_in_sets_with_conditions,
-            limit_threads: usize::MAX,
+            limit_concurrent_system: usize::MAX,
         }
     }
 
@@ -1534,11 +1534,11 @@ impl ScheduleGraph {
         {
             self.system_set_conditions[id.index()] = conditions;
         }
-        let limitthreads = schedule.limit_threads;
+        let limit_concurrent_system = schedule.limit_concurrent_system;
 
         *schedule = self.build_schedule(world, schedule_label, ignored_ambiguities)?;
 
-        schedule.limit_threads = limitthreads;
+        schedule.limit_concurrent_system = limit_concurrent_system;
 
         // move systems into new schedule
         for &id in &schedule.system_ids {

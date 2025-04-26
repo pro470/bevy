@@ -99,7 +99,7 @@ pub struct SystemSchedule {
     ///
     /// If a set doesn't run because of its conditions, this is used to skip all systems in it.
     pub(super) systems_in_sets_with_conditions: Vec<FixedBitSet>,
-    pub(super) limit_threads: usize,
+    pub(super) limit_concurrent_system: usize,
 }
 
 impl SystemSchedule {
@@ -115,7 +115,7 @@ impl SystemSchedule {
             system_dependents: Vec::new(),
             sets_with_conditions_of_systems: Vec::new(),
             systems_in_sets_with_conditions: Vec::new(),
-            limit_threads: usize::MAX,
+            limit_concurrent_system: usize::MAX,
         }
     }
 }
