@@ -1534,8 +1534,11 @@ impl ScheduleGraph {
         {
             self.system_set_conditions[id.index()] = conditions;
         }
+        let limitthreads = schedule.limit_threads;
 
         *schedule = self.build_schedule(world, schedule_label, ignored_ambiguities)?;
+
+        schedule.limit_threads = limitthreads;
 
         // move systems into new schedule
         for &id in &schedule.system_ids {
